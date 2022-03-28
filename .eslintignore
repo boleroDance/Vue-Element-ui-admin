@@ -1,0 +1,5 @@
+/ *eslint-disable* /
+build/*.js
+src/assets
+public
+dist
