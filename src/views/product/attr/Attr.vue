@@ -57,6 +57,7 @@
                   type="danger"
                   icon="el-icon-delete"
                   size="mini"
+                  style="margin-left: 20px"
                 ></el-button>
               </el-popconfirm>
             </template>
