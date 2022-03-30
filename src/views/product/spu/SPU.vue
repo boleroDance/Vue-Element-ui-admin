@@ -38,7 +38,7 @@
       </div>
       <!-- 切换 编辑 spu -->
       <div v-show="scene == 1">
-        <spu-form></spu-form>
+        <spu-form @desubmit="changeScene" ref="spu"></spu-form>
       </div>
       <!-- 切换 编辑 sku -->
       <div v-show="scene == 2">
@@ -100,7 +100,15 @@ export default {
     },
     addSpu(row) {
       this.scene = 1
-      console.log(row)
+      // 获取子组件spuform 之后可以拿到子组件的方法
+      console.log(this.$refs.spu)
+      this.$refs.spu.initSpuData(row)
+      
+
+    },
+    changeScene(scene) {
+      // 子组件spuform的取消自定义事件回调
+    this.scene = scene
     }
   }
 }
