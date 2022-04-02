@@ -37,7 +37,7 @@ export const reqbaseSaleAttrList = () => request({
   method: 'GET'
 })
 
-// 添加spu
+// 更新spu
 // {
 //   "category3Id": 0,
 //   "description": "string",
@@ -71,3 +71,29 @@ export const reqbaseSaleAttrList = () => request({
 //   ],
 //   "tmId": 0
 // }
+
+// savespu
+// POST /admin/product/saveSpuInfo
+
+// 修改spu || 添加spu 区别：携带参数是否带id
+export const reqAddOrUpdateSpu = (spuInfo) => {
+  if(spuInfo.id) {
+    return request({
+      url: '/admin/product/updateSpuInfo',
+      method: 'POST',
+      data: spuInfo
+    })
+  } else {
+    return request({
+      url:'/admin/product/saveSpuInfo',
+      method: 'POST',
+      data: spuInfo
+    })
+  }
+}
+
+// DELETE /admin/product/deleteSpu/{spuId}
+export const reqDeleteSpu = (spuId) => request({
+  url: `/admin/product/deleteSpu/${spuId}`,
+  method: 'DELETE'
+})

@@ -81,7 +81,7 @@
                 v-for="(tag, index) in row.spuSaleAttrValueList"
                 closable
                 :disable-transitions="false"
-                @close="handleClose(tag)"
+                @close="row.spuSaleAttrValueList.splice(index, 1)"
                 >{{ tag.saleAttrValueName }}</el-tag
               >
               <el-input
@@ -101,19 +101,22 @@
             </template>
           </el-table-column>
           <el-table-column label="操作" width="width">
-            <template>
+            <template slot-scope="{ row, $index }">
               <el-button
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
+                @click="spu.spuSaleAttrList.splice($index, 1)"
               ></el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">保存</el-button>
-        <el-button @click="$emit('desubmit', 0)">取消</el-button>
+        <el-button type="primary" @click="submitAddOrUpdateSpu()"
+          >保存</el-button
+        >
+        <el-button @click="desubmitAddOrUpdateSpu">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -213,15 +216,44 @@ export default {
     },
     handleInputConfirm(row) {
       // 失去焦点事件 变成tag
-      const { baseSaleAttrId, inputValue} = row;
+      const { baseSaleAttrId, inputValue } = row;
       if (inputValue.trim() == "") {
         this.$message.warning("属性值不能为空");
         return;
       }
-      console.log(row)
-      let newSaleAttrValue = { baseSaleAttrId, saleAttrValueName: inputValue};
+
+      let result = row.spuSaleAttrValueList.every(
+        (item) => item.saleAttrValueName !== inputValue
+      );
+      if (!result) {
+        this.$message.warning("请勿输入重复的属性值");
+        return;
+      }
+      let newSaleAttrValue = { baseSaleAttrId, saleAttrValueName: inputValue };
       row.spuSaleAttrValueList.push(newSaleAttrValue);
       row.inputVisible = false;
+    },
+    submitAddOrUpdateSpu() {
+      // 只需要整理照片墙的参数，其余都在spu里
+      // 照片墙要带有imgName和imgUrl属性
+      let res = this.spuImageList.map((item) => {
+        return {
+          imgName: item.name,
+          imgUrl: item.url || item.response.data,
+        };
+      });
+      this.spu.spuImageList = res;
+
+      return new Promise((resolve, reject) => {
+        let response = this.$API.spu.reqAddOrUpdateSpu(this.spu);
+        resolve(response);
+      }).then((response) => {
+        this.$message.success("保存成功");
+        this.$emit("changeScene", {scene:0, flag:this.spu.id? 'update':'add'});
+        // 清除数据
+        Object.assign(this._data, this.$options.data())
+      });
+
     },
     initSpuData(row) {
       // 这里要发送四个请求
@@ -262,7 +294,37 @@ export default {
         });
       });
     },
+    addSpuData(category3Id) {
+      this.spu.category3Id = category3Id
+      return new Promise((resolve, reject) => {
+        // 获取品牌信息
+        let res = this.$API.spu.reqTrademarkList();
+        resolve(res);
+      }).then((res) => {
+        this.trademarkList = res.data
+        return new Promise((resolve, reject) => {
+          // 获取全部平台的销售属性
+          let res = this.$API.spu.reqbaseSaleAttrList();
+          resolve(res);
+        }).then((baseSaleAttrres) => {
+          this.saleAttrList = baseSaleAttrres.data
+        })
+      });
+    },
+    desubmitAddOrUpdateSpu() {
+      // 取消按钮的回调
+      this.$emit('changeScene', {scene:0, flag:'add'})
+      // 清数据
+      // Object.assign
+      // 组件实例中的this._data 是全部的响应式数据, 可以操作data中的响应式数据
+      // this.$options是组件实例中的配置对象 配置对象的data函数执行，返回一个空的响应式数据
+      console.log(this._data)
+      console.log(this.$options.data)
+      Object.assign(this._data, this.$options.data())
+
+    }
   },
+
   computed: {
     unselectedAttr() {
       // saleAttrList 颜色 尺寸 版本

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card style="margin: 20px 0">
-       <CategorySelect @getCategoryId="getCategoryId" :show="!isShowTable"></CategorySelect>
+       <CategorySelect @getCategoryId="getCategoryId" :show="scene != 0"></CategorySelect>
     </el-card>
     <el-card>
       <!-- 切换 spu 列表 -->
@@ -15,9 +15,11 @@
           <el-table-column prop="prop" label="操作" width="width">
             <template slot-scope="{row, $index}">
               <el-button type="success" title="添加Sku" icon="el-icon-plus" size="mini"></el-button>
-              <el-button type="warning" title="修改Spu" icon="el-icon-edit" size="mini" @click="addSpu(row)"></el-button>
+              <el-button type="warning" title="修改Spu" icon="el-icon-edit" size="mini" @click="updateAttr(row)"></el-button>
               <el-button type="info" title="查看当前spu全部sku列表" icon="el-icon-info" size="mini"></el-button>
-              <el-button type="danger" title="删除spu" icon="el-icon-delete" size="mini"></el-button>
+              <el-popconfirm @onConfirm="deleteSpu(row)" style="margin-left: 10px" title="确定删除该spu吗？">
+                <el-button slot="reference" type="danger" title="删除spu" icon="el-icon-delete" size="mini"></el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -38,7 +40,7 @@
       </div>
       <!-- 切换 编辑 spu -->
       <div v-show="scene == 1">
-        <spu-form @desubmit="changeScene" ref="spu"></spu-form>
+        <spu-form @changeScene="changeScene" ref="spu"></spu-form>
       </div>
       <!-- 切换 编辑 sku -->
       <div v-show="scene == 2">
@@ -60,7 +62,7 @@ export default {
       category1Id: "",
       category2Id: "",
       category3Id: "",
-      isShowTable: true,
+      // isShowTable: true,
       page: 1,
       limit: 3,
       // spu列表数据
@@ -98,17 +100,40 @@ export default {
       this.limit = limit
       this.getSpuList()
     },
-    addSpu(row) {
+    updateAttr(row) {
       this.scene = 1
       // 获取子组件spuform 之后可以拿到子组件的方法
       console.log(this.$refs.spu)
       this.$refs.spu.initSpuData(row)
-      
-
     },
-    changeScene(scene) {
+    addSpu() {
+      // 发送两个请求 1.获取品牌的数据 2.全部销售属性数据
+      this.scene = 1
+      this.$refs.spu.addSpuData(this.category3Id)
+    },
+    deleteSpu(row) {
+      console.log(row)
+      return new Promise((resolve, reject) => {
+        let res = this.$API.spu.reqDeleteSpu(row.id)
+        resolve(res)
+      })
+      .then(res => {
+        this.$message.success('删除成功')
+        this.getSpuList()
+        
+      })
+    },
+    changeScene({scene, flag}) {
       // 子组件spuform的取消自定义事件回调
+      // flag是为了区别保存按钮是update还是add 
+      // update是停留在当前页 add返回首页
     this.scene = scene
+    if(flag == 'update') {
+      console.log('update')
+      this.getSpuList(this.page)
+    } else {
+      this.getSpuList()
+    }
     }
   }
 }
