@@ -14,7 +14,7 @@
           <el-table-column prop="description" label="SPU描述" width="width"></el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
             <template slot-scope="{row, $index}">
-              <el-button type="success" title="添加Sku" icon="el-icon-plus" size="mini"></el-button>
+              <el-button type="success" title="添加Sku" icon="el-icon-plus" size="mini" @click="addSku(row)"></el-button>
               <el-button type="warning" title="修改Spu" icon="el-icon-edit" size="mini" @click="updateAttr(row)"></el-button>
               <el-button type="info" title="查看当前spu全部sku列表" icon="el-icon-info" size="mini"></el-button>
               <el-popconfirm @onConfirm="deleteSpu(row)" style="margin-left: 10px" title="确定删除该spu吗？">
@@ -44,7 +44,7 @@
       </div>
       <!-- 切换 编辑 sku -->
       <div v-show="scene == 2">
-        <sku-form></sku-form>
+        <sku-form ref="sku"></sku-form>
       </div>
     </el-card>
   </div>
@@ -122,6 +122,14 @@ export default {
         this.getSpuList()
         
       })
+    },
+    addSku(row) {
+      // 添加sku按钮的回调
+      this.scene = 2
+      // 通知子组件发送请求
+      // 3个请求
+      console.log(row)
+      this.$refs.sku.getData(this.category1Id, this.category2Id, row)
     },
     changeScene({scene, flag}) {
       // 子组件spuform的取消自定义事件回调
