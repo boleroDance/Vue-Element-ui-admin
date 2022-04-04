@@ -41,33 +41,34 @@
         </el-form>
       </el-form-item>
       <el-form-item label="图片列表">
-        <el-table style="width: 100%" border>
+        <el-table @selection-change="handleSelectionChange" border :data="spuImageList" style="width: 100%">
           <el-table-column
             type="selection"
             prop="prop"
             width="80"
           ></el-table-column>
-          <el-table-column prop="prop" label="图片" width="width">
-            <template>
-              <img src="" alt="" />
+          <el-table-column prop="prop" label="图片" align="center" width="width">
+            <template slot-scope="{row, $index}">
+              <img :src="row.imgUrl" alt="" style="width: 100px; height: 100px"/>
             </template>
           </el-table-column>
           <el-table-column
-            prop="prop"
+            prop="imgName"
             label="名称"
             width="width"
+            align="center"
           ></el-table-column>
           <el-table-column prop="prop" label="操作" width="width">
-            <template>
-              <el-button type="primary">设置默认</el-button>
-              <el-button>默认</el-button>
+            <template slot-scope="{row, $index}">
+              <el-button v-if="row.isDefault==0" @click="changeDefault(row)" type="primary">设置默认</el-button>
+              <el-button v-else>默认</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">保存</el-button>
-        <el-button>取消</el-button>
+        <el-button @click="submitSaveSku" type="primary">保存</el-button>
+        <el-button @click="deSubmitSaveSku">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -86,6 +87,8 @@ export default {
       // 3.平台属性
       attrInfoList: [],
       spu: {},
+      //暂时存放选中的图片but without isDefalut property
+      ImageList: [],
       // 收集sku数据的字段
       skuInfo: {
         category3Id: 0,   
@@ -98,18 +101,16 @@ export default {
         skuDefaultImg: "",
         // sku平台属性
         skuAttrValueList: [
-          {
-            attrId: 0,
-            valueId: 0,
-          },
+          // {
+          //   attrId: 0,
+          //   valueId: 0,
+          // },
         ],
         skuImageList: [
           // {
-          //   id: 0,
           //   imgName: "string",
           //   imgUrl: "string",
           //   isDefault: "string",
-          //   skuId: 0,
           //   spuImgId: 0,
           // },
         ],
@@ -155,11 +156,71 @@ export default {
           resolve(res);
         }),
       ]).then((responses) => {
-        this.spuImageList = responses[0].data;
+        let list = responses[0].data;
+        list.forEach(element => {
+          element.isDefault = 0
+        });
+        this.spuImageList = list
         this.spuSaleAttrList = responses[1].data;
         this.attrInfoList = responses[2].data;
       });
     },
+    handleSelectionChange(row) {
+      console.log(row)
+      // 可以获取用户选中图片的信息数据(id, imgName, imgUrl, spuId)
+      this.ImageList = row 
+    },
+    changeDefault(row) {
+      // 点击修改isDefault为1，其余都为0
+      console.log(row)
+      this.spuImageList.forEach(item => {
+        item.isDefault = 0
+      })
+      row.isDefault = 1
+      this.skuInfo.skuDefaultImg = row.imgUrl
+    },
+    deSubmitSaveSku() {
+      this.$emit('desubmitSoChangeScene', 0)
+      Object.assign(this._data, this.$options.data.call(this))
+    },
+    submitSaveSku() {
+      // 整理参数
+      // 1.整理spuSaleAttrList -》 skuInfo.skuAttrValueList
+      this.attrInfoList.forEach(item =>{
+        if(item.attrIdAndValueId) {
+          const [attrId, valueId] = item.attrIdAndValueId.split(":")
+          let obj = {attrId, valueId}
+          this.skuInfo.skuAttrValueList.push(obj)
+        }
+      })
+      // 2.整理spuSaleAttrList -> skuSaleAttrValueList
+      this.spuSaleAttrList.forEach(item => {
+        if(item.attrIdAndValueId) {
+          const [saleAttrId, saleAttrValueId] = item.attrIdAndValueId.split(":")
+          let obj = {saleAttrId, saleAttrValueId}
+          this.skuInfo.skuSaleAttrValueList.push(obj)
+        }
+      })
+      //3. 整理imageList的参数
+      this.skuInfo.skuImageList = this.ImageList.map(item => {
+        return {
+          imgName: item.imgName,
+          imgUrl: item.imgUrl,
+          isDefault: item.isDefault,
+          spuImgId: item.id
+        }
+      })
+      
+      return new Promise((resolve, reject) => {
+        let res = this.$API.spu.reqSaveSkuInfo(this.skuInfo)
+        resolve(res)
+      })
+      .then(response => {
+        console.log(response)
+        this.$message.success('添加sku成功')
+        this.deSubmitSaveSku()
+      })
+    }
   },
 };
 </script>

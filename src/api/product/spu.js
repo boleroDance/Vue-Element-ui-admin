@@ -97,3 +97,18 @@ export const reqDeleteSpu = (spuId) => request({
   url: `/admin/product/deleteSpu/${spuId}`,
   method: 'DELETE'
 })
+
+// 保存添加sku
+// POST /admin/product/saveSkuInfo  参数skuInfo
+export const reqSaveSkuInfo = (skuInfo) => request({
+  url: '/admin/product/saveSkuInfo',
+  data: skuInfo,
+  method: 'POST'
+})
+
+// 获取sku列表数据
+// GET /admin/product/findBySpuId/{spuId}
+export const reqSkuList = (spuId) => request({
+  url: `/admin/product/findBySpuId/${spuId}`,
+  method: 'GET'
+})
