@@ -147,15 +147,6 @@ export default {
     this.getPageList();
   },
   methods: {
-    // async getPageList() {
-    //   const { page, limit } = this
-    //   let result = await this.$API.trademark.reqTradeMarkList(page, limit)
-    //   console.log(result)
-    //   if(result.code == 200) {
-    //     this.total = result.data.total
-    //     this.list = result.data.records
-    //   }
-    // }
     getPageList(pager = 1) {
       this.page = pager;
       const { page, limit } = this;
@@ -168,7 +159,6 @@ export default {
         });
       });
     },
-
     handleCurrentChange(pager) {
       this.getPageList(pager);
     },

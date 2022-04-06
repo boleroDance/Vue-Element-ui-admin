@@ -68,3 +68,33 @@ export const reqattrInfoList = (category1Id, category2Id, category3Id) => reques
 //   "tmId": 0,
 //   "weight": "string"
 // }
+
+// sku模块
+
+// 获取sku列表
+// GET /admin/product/list/{page}/{limit}
+export const reqSkuList = (page, limit) => request({
+  url: `/admin/product/list/${page}/${limit}`,
+  method: 'GET'
+})
+
+// sku上架
+// GET /admin/product/onSale/{skuId}
+export const reqOnSale = (skuId) => request({
+  url: `/admin/product/onSale/${skuId}`,
+  method: 'GET'
+})
+
+// sku下架
+// GET /admin/product/cancelSale/{skuId}
+export const reqCancelSale = (skuId) => request({
+  url: `/admin/product/cancelSale/${skuId}`,
+  method: 'GET'
+})
+
+// 获取sku详情
+// GET /admin/product/getSkuById/{skuId}
+export const reqSkuDetail = (skuId) => request({
+  url: `/admin/product/getSkuById/${skuId}`,
+  method: 'GET'
+})
