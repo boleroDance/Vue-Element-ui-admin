@@ -68,11 +68,19 @@
             @click="getSkuDetail(row)"
             size="mini"
           ></el-button>
-          <el-button
-            type="danger"
-            icon="el-icon-delete"
-            size="mini"
-          ></el-button>
+          <el-popconfirm
+            @onConfirm="deleteSku(row)"
+            style="margin-left: 10px"
+            title="确定删除该sku吗？"
+          >
+            <el-button
+              slot="reference"
+              type="danger"
+              title="删除sku"
+              icon="el-icon-delete"
+              size="mini"
+            ></el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -212,6 +220,15 @@ export default {
         this.skuDetailInfo = response.data;
       });
     },
+    deleteSku(row) {
+      return new Promise((resolve, reject) => {
+        let res = this.$API.sku.reqDeleteSku(row.id)
+        resolve(res)
+      }).then(response => {
+        this.$message.success('删除成功')
+        this.getSkuList()
+      })
+    }
   },
 };
 </script>
@@ -242,11 +259,10 @@ export default {
   font-weight: bold;
 }
 
-  >>>.el-carousel__button{
-    width:10px;
-    height:10px;
-    background:red;
-    border-radius:50%;
-  }
-
+>>> .el-carousel__button {
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 50%;
+}
 </style>

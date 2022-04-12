@@ -98,3 +98,9 @@ export const reqSkuDetail = (skuId) => request({
   url: `/admin/product/getSkuById/${skuId}`,
   method: 'GET'
 })
+
+// DELETE /admin/product/deleteSku/{skuId}
+export const reqDeleteSku = (skuId) => request({
+  url: `/admin/product/deleteSku/${skuId}`,
+  method: 'DELETE'
+})

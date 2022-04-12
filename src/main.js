@@ -40,8 +40,10 @@ Vue.prototype.$API = API
 
 // 引入全局组件
 import CategorySelect from '@/components/CategorySelect'
+import Footer from '@/components/Footer'
 // 注册全局组件
 Vue.component( CategorySelect.name, CategorySelect)
+Vue.component(Footer.name, Footer)
 
 new Vue({
   el: '#app',

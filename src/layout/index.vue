@@ -7,6 +7,7 @@
         <navbar />
       </div>
       <app-main />
+      <Footer></Footer>
     </div>
   </div>
 </template>
