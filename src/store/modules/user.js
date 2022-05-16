@@ -28,22 +28,22 @@ const mutations = {
 }
 
 const actions = {
+
   // user login
-  login({ commit }, userInfo) { 
-    const { username, password } = userInfo
+  userLogin({ commit }, data) {
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password })
-      .then(response => {
-        console.log(response)
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+      login(data)
+      .then(res => {
+        console.log(res)
+        commit('SET_TOKEN', res.data.token)
+        setToken(res.data.token)
         resolve()
       }).catch(error => {
         reject(error)
       })
     })
   },
+
 
   // get user info
   getInfo({ commit, state }) {

@@ -13,7 +13,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="请输入用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -30,7 +30,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="请输入密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -45,7 +45,7 @@
 
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
-        <span> password: any</span>
+        <span> password: 111111</span>
       </div>
 
     </el-form>
@@ -75,8 +75,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -112,7 +112,9 @@ export default {
         if (valid) {
           this.loading = true
           // 派发一个action, 带着payload(用户名和密码) 
-          this.$store.dispatch('user/login', this.loginForm)
+          const {username, password} = this.loginForm
+          this.$store.dispatch('user/userLogin', {username, password})
+      
           .then(() => {
             this.$message.success('登陆成功')
             this.$router.push({ path: this.redirect || '/' })
@@ -120,7 +122,7 @@ export default {
           }).catch(() => {
             this.loading = false
           })
-        } else {
+        } else { 
           console.log('error submit!!')
           return false
         }
