@@ -1,8 +1,8 @@
 <template>
   <el-card style="margin-top: 10px">
     <el-tabs class="el-tab" v-model="activeName">
-      <el-tab-pane label="销售额" name="salesData"> 销售额的数据 </el-tab-pane>
-      <el-tab-pane label="访问量" name="heatsData"> 访问量的数据 </el-tab-pane>
+      <el-tab-pane label="销售额" name="salesData">  </el-tab-pane>
+      <el-tab-pane label="访问量" name="heatsData">  </el-tab-pane>
       <div class="tab-right">
         <span>本日</span><span>本周</span><span>本月</span><span>本年</span>
         <el-date-picker
