@@ -1,11 +1,14 @@
 <template>
   <el-card style="margin-top: 10px">
     <el-tabs class="el-tab" v-model="activeName">
-      <el-tab-pane label="销售额" name="salesData">  </el-tab-pane>
-      <el-tab-pane label="访问量" name="heatsData">  </el-tab-pane>
+      <el-tab-pane label="销售额" name="salesData"></el-tab-pane>
+      <el-tab-pane label="访问量" name="heatsData"></el-tab-pane>
       <div class="tab-right">
-        <span>本日</span><span>本周</span><span>本月</span><span>本年</span>
+        <span @click="setDay">本日</span><span>本周</span><span>本月</span><span>本年</span>
+        <!-- value-format	可选，绑定值的格式。不指定则绑定值为 Date 对象 -->
         <el-date-picker
+          v-model="date"
+          value-format="yyyy-MM-dd"
           class="date-editor"
           type="daterange"
           range-separator="|"
@@ -19,11 +22,11 @@
     <div>
       <el-row :gutter="10">
         <el-col :span="18">
-         <sale-charts></sale-charts>
+          <sale-charts></sale-charts>
         </el-col>
         <el-col :span="6">
           <div class="sale-right">
-            <h3>门店销售额排名</h3>
+            <h3>门店{{ title }}排名</h3>
             <ul>
               <li>
                 <span class="sale-right-icon">1</span>
@@ -69,23 +72,47 @@
 </template>
 
 <script>
-import SaleCharts from './SaleCharts.vue'
+import SaleCharts from "./SaleCharts.vue";
 export default {
   components: {
-    SaleCharts
+    SaleCharts,
   },
   data() {
     return {
-      activeName: 'salesData'
-    }
-  }
+      activeName: "salesData",
+      // 收集data的数据
+      date: null
+    };
+  },
+  computed: {
+    // sale右侧的title
+    title() {
+      if (this.activeName === "salesData") {
+        return "销售额";
+      } else {
+        return "访问量";
+      }
+    },
+  },
+  methods: {
+    setDay() {
+      let current = +new Date()
+      let time = new Date(current)
+      let year = time.getFullYear() // year
+      let month = ("0" + (time.getMonth() + 1)).slice(-2)
+      let day = ("0" + time.getDate()).slice(-2)
+      let mydate = year + "-" + month + "-" + day
+      this.date = [mydate, mydate]
+    },
+   
+  },
 };
 </script>
 
 <style>
 .el-tab {
   display: flex;
-  justify-content:space-between;
+  justify-content: space-between;
 }
 .tab-right {
   height: 40px;
@@ -107,7 +134,7 @@ export default {
   padding-left: 0;
 }
 .sale-right ul li {
-  margin:6px 0;
+  margin: 6px 0;
   height: 30px;
   line-height: 30px;
 }
@@ -115,7 +142,7 @@ export default {
   width: 15px;
   height: 15px;
   line-height: 15px;
-  display:inline-block;
+  display: inline-block;
   background-color: black;
   border-radius: 50%;
   color: white;
