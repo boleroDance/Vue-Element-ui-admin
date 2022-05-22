@@ -37,7 +37,7 @@ export default {
 
 <style scoped>
 .search {
-  height: 300px;
+  height: 400px;
 }
 .search-header {
   display: flex;

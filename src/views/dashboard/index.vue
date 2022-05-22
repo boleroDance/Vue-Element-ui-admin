@@ -15,6 +15,9 @@ export default {
   components: { Card, Sale, Observe },
   name: 'Dashboard',
   computed: { 
+  },
+  mounted() {
+    this.$store.dispatch('getDashbordData')
   }
 }
 </script>

@@ -5,9 +5,7 @@
           <search></search>
       </el-col>
       <el-col :span="12">
-        <el-card>
           <category></category>
-        </el-card>
       </el-col>
     </el-row>
   </div>
