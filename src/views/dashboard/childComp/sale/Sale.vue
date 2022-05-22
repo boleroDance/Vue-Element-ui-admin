@@ -22,7 +22,7 @@
     <div>
       <el-row :gutter="10">
         <el-col :span="18">
-          <sale-charts></sale-charts>
+          <sale-charts ref="salechart"></sale-charts>
         </el-col>
         <el-col :span="6">
           <div class="sale-right">
@@ -81,7 +81,8 @@ export default {
     return {
       activeName: "salesData",
       // 收集data的数据
-      date: null
+      date: null,
+      activeTitle: '销售额'
     };
   },
   computed: {
@@ -93,6 +94,14 @@ export default {
         return "访问量";
       }
     },
+  },
+  watch: {
+    // 监听属性title的变化，一旦发生改变，通知子组件图标重新渲染，给标题赋予新值
+    title() {
+      this.activeTitle = this.title
+      this.$refs.salechart.activeTitle = this.title
+      this.$refs.salechart.changeData()
+    }
   },
   methods: {
     setDay() {

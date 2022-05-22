@@ -1,5 +1,5 @@
 <template>
-  <div id="sale-charts" ref="charts"></div>
+    <div id="sale-charts" ref="charts"></div>
 </template>
 
 <script>
@@ -7,11 +7,17 @@ import * as echarts from "echarts";
 
 export default {
   name: "",
+  data() {
+    return {
+      mySaleChart: null,
+      activeTitle: '销售额'
+    }
+  },
   mounted() {
-    let mySaleChart = echarts.init(this.$refs.charts);
+    this.mySaleChart = echarts.init(this.$refs.charts);
     var option = {
       title: {
-        text: "销售额趋势"
+        text: ""
       },
       tooltip: {
         trigger: "axis",
@@ -28,7 +34,7 @@ export default {
       xAxis: [
         {
           type: "category",
-          data: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+          data: [],
           axisTick: {
             alignWithLabel: true,
           },
@@ -44,14 +50,48 @@ export default {
           name: "Direct",
           type: "bar",
           barWidth: "60%",
-          data: [10, 52, 200, 334, 390, 330, 220, 23, 123, 67, 134, 98],
+          data: [],
           color: 'yellowgreen'
         },
       ],
     };
 
-    mySaleChart.setOption(option);
+    this.mySaleChart.setOption(option);
+
+    this.changeData()
   },
+  computed: {
+    listState () {
+      return this.$store.state.dashbord.list
+    }
+  },
+  watch: {
+    listState() {
+      this.changeData()
+    }
+  },
+  methods: {
+    changeData () {
+      console.log('change')
+      this.mySaleChart.setOption({
+        title: {
+          text: this.activeTitle
+        },
+        xAxis: {
+          data: this.activeTitle == '销售额'? this.listState.orderFullYearAxis: this.listState.userFullYearAxis
+        },
+        series: [
+          {
+          name: "Direct",
+          type: "bar",
+          barWidth: "60%",
+          data: this.activeTitle == '销售额'?this.listState.orderFullYear:this.listState.userFullYear,
+          color: 'yellowgreen'
+        },
+        ]
+      })
+    }
+  }
 };
 </script>
 
