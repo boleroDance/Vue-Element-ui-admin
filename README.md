@@ -6,9 +6,15 @@ VUE+ element UI + admin中后台管理系统搭建
 
 + vue-cli webpack
 + element-ui vue2.0 pc UI框架
-+ axios
++ axios 负责数据请求
 + js-cookie  轻量的JavaScript库来处理cookie
 + echarts 图标库处理数据可视化
++ mock.js 模拟数据可视化的数据
+
+## 上线地址
+[点击进入](https://www.boleroshopping.online/)
+账号：admin
+密码：111111
 
 [官方文档](https://panjiachen.github.io/vue-element-admin-site/zh/guide/#%E5%8A%9F%E8%83%BD)
 
