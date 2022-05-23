@@ -16,7 +16,6 @@ VUE+ element UI + admin中后台管理系统搭建
 账号：admin
 密码：111111
 
-[官方文档](https://panjiachen.github.io/vue-element-admin-site/zh/guide/#%E5%8A%9F%E8%83%BD)
 
 #### dashboard部分截图
 
